@@ -18,6 +18,7 @@ router = Router(name=__name__)
 @router.message(F.text == "👨‍💻 Админка")
 async def open_admin_menu(message: Message, bot: Bot, state: FSM, arSession: ARS):
     await state.clear()
+    
     await message.answer(
         "Вы открыли меню администратора", 
         reply_markup=admin_rep(user_id=message.from_user.id)

@@ -57,9 +57,9 @@ class DB(AsyncClass):
     # Регистрация пользователя в БД
     async def register_user(self, user_id, user_name, first_name):
         await self.con.execute("INSERT INTO users("
-                                "user_id, user_name, first_name, unix, balance)"
-                                "VALUES (?,?,?,?,?)",
-                                [user_id, user_name, first_name, get_unix(full=False), 0])
+                                "user_id, user_name, first_name, unix)"
+                                "VALUES (?,?,?,?)",
+                                [user_id, user_name, first_name, get_unix(full=False)])
         await self.con.commit()
         
     # Редактирование пользователя
@@ -70,11 +70,17 @@ class DB(AsyncClass):
         await self.con.execute(queryy + "WHERE user_id = ?", params)
         await self.con.commit()
 
-    #Проверка на существование бд и ее создание
+    # Получение настроек
+    async def get_settings(self, **kwargs):
+        queryy = "SELECT * FROM settings"
+        queryy, params = query_args(queryy, kwargs)
+        row = await self.con.execute(queryy, params)
+        return await row.fetchone()
+    
 #Проверка на существование бд и ее создание
     async def create_db(self):
         users_info = await self.con.execute("PRAGMA table_info(users)")
-        if len(await users_info.fetchall()) == 6:
+        if len(await users_info.fetchall()) == 5:
             print("database was found (Users | 1/10)")
         else:
             await self.con.execute("CREATE TABLE users ("
@@ -82,7 +88,21 @@ class DB(AsyncClass):
                                    "user_id INTEGER,"
                                    "user_name TEXT,"
                                    "first_name TEXT,"
-                                   "unix INTEGER,"
-                                   "balance INTEGER)")
+                                   "unix INTEGER)")
             print("database was not found (Users | 1/10), creating...")
+            await self.con.commit()
+            
+        settings_info = await self.con.execute("PRAGMA table_info(settings)")
+        if len(await settings_info.fetchall()) == 4:
+            print("database was found (Settings | 2/10)")
+        else:
+            await self.con.execute("CREATE TABLE settings ("
+                                   "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                   "is_work TEXT,"
+                                   "support TEXT,"
+                                   "description TEXT)")
+            print("database was not found (Settings | 2/10), creating...")
+            await self.con.execute("INSERT INTO settings("
+                                            "is_work, support, description) "
+                                            "VALUES (?, ?, ?)", ['True', '', ''])
             await self.con.commit()
