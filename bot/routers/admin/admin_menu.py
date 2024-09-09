@@ -10,8 +10,18 @@ from aiogram.utils.media_group import MediaGroupBuilder
 from bot.data.config import PATH_DATABASE, PATH_LOGS
 from bot.utils.const_functions import get_date
 from bot.utils.misc.bot_models import FSM, ARS
+from bot.keyboards.reply_main import admin_rep
 
 router = Router(name=__name__)
+
+# Открытие меню администратора 
+@router.message(F.text == "👨‍💻 Админка")
+async def open_admin_menu(message: Message, bot: Bot, state: FSM, arSession: ARS):
+    await state.clear()
+    await message.answer(
+        "Вы открыли меню администратора", 
+        reply_markup=admin_rep(user_id=message.from_user.id)
+    )
 
 # Получение Базы Данных
 @router.message(Command(commands=['db', 'database']))
@@ -22,7 +32,6 @@ async def admin_database(message: Message, bot: Bot, state: FSM, arSession: ARS)
         FSInputFile(PATH_DATABASE),
         caption=f"<b>📦 #BACKUP | <code>{get_date()}</code></b>",
     )
-
 
 # Получение логов
 @router.message(Command(commands=['log', 'logs']))

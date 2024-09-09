@@ -7,7 +7,7 @@ from bot.utils.const_functions import rkb
 
 
 # Кнопки главного меню
-def menu_frep(user_id: int) -> ReplyKeyboardMarkup:
+def menu_rep(user_id: int) -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
 
     keyboard.row(
@@ -17,6 +17,20 @@ def menu_frep(user_id: int) -> ReplyKeyboardMarkup:
     if user_id in get_admins():
         keyboard.row(
             rkb("👨‍💻 Админка"),
+        )
+
+    return keyboard.as_markup(resize_keyboard=True)
+
+def admin_rep(user_id: int) -> ReplyKeyboardMarkup:
+    keyboard = ReplyKeyboardBuilder()
+    
+    if user_id in get_admins():
+        keyboard.row(
+            rkb("💶 Валюты"), rkb("⚙ Настройки")
+        ).row(
+            rkb('🔆 Функции'), rkb('📊 Статистика')
+        ).row(
+            rkb("🔙 Главное меню")
         )
 
     return keyboard.as_markup(resize_keyboard=True)
