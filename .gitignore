@@ -187,3 +187,4 @@ fabric.properties
 /tgbot/data/database.db
 /tgbot/data/logs.log
 settings.ini
+bot/data/database.db

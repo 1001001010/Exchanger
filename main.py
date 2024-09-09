@@ -20,7 +20,7 @@ colorama.init()
 
 # Запуск шедулеров
 async def scheduler_start(bot):
-    BOT_SCHEDULER.add_job(autobackup_admin, trigger="cron", hour=00, args=(bot,))  # Ежедневный Автобэкап в 00:00
+    BOT_SCHEDULER.add_job(autobackup_admin, trigger="cron", hour=00, args=(bot,))  # Ежедневный Ав тобэкап в 00:00
 
 
 # Запуск бота и базовых функций
@@ -44,7 +44,7 @@ async def main():
         await scheduler_start(bot)  # Подключение шедулеров
 
         bot_logger.warning("Бот был запущен!")
-        print(colorama.Fore.LIGHTYELLOW_EX + f"~~~~~ Бот был запущен! - @{(await bot.get_me()).username} ~~~~~")
+        print(colorama.Fore.LIGHTRED_EX + f"~~~~~ Бот был запущен! - @{(await bot.get_me()).username} ~~~~~")
         print(colorama.Fore.LIGHTBLUE_EX + "~~~~~ Разработчик - @lll10010010 ~~~~~")
         print(colorama.Fore.RESET)
 
@@ -66,7 +66,7 @@ async def main():
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    loop.create_task(db.create_db())
+    loop.run_until_complete(db.create_db())
 
     try:
         if sys.platform == 'win32':  # Запуск на 32-х битных системах

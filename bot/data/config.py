@@ -1,5 +1,6 @@
 # - *- coding: utf- 8 - *-
 import configparser
+import asyncio
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from bot.data.db import DB
@@ -10,17 +11,21 @@ async def main_db():
 
     return db
 
+loop = asyncio.get_event_loop()
+task = loop.create_task(main_db())
+db = loop.run_until_complete(task)
+
 # Токен бота
 BOT_TOKEN = configparser.ConfigParser()
 BOT_TOKEN.read("settings.ini")
 BOT_TOKEN = BOT_TOKEN['settings']['bot_token'].strip().replace(' ', '')
 
 # Пути к файлам
-PATH_DATABASE = "tgbot/data/database.db"  # Путь к БД
-PATH_LOGS = "tgbot/data/logs.log"  # Путь к Логам
+PATH_DATABASE = "bot/data/database.db"  # Путь к БД
+PATH_LOGS = "bot/data/logs.log"  # Путь к Логам
 
 # Образы и конфиги
-BOT_STATUS_NOTIFICATION = True  # Оповещение админам о запуске бота (True или False)
+BOT_STATUS_NOTIFICATION = False  # Оповещение админам о запуске бота (True или False)
 BOT_TIMEZONE = "Europe/Moscow"  # Временная зона бота
 BOT_SCHEDULER = AsyncIOScheduler(timezone=BOT_TIMEZONE)  # Образ шедулера
 

@@ -2,10 +2,10 @@ import aiosqlite
 from async_class import AsyncClass
 import time
 
-path_db = 'bot/data/database.db'
+PATH_DATABASE = "bot/data/database.db"  # Путь к БД
 
-# Получение текущего unix времени
-def get_unix(full=False):
+# Получение текущего unix времени (True - время в наносекундах, False - время в секундах)
+def get_unix(full: bool = False) -> int:
     if full:
         return time.time_ns()
     else:
@@ -44,7 +44,7 @@ def query_args(sql, parameters: dict):
 #Проверка и создание бд
 class DB(AsyncClass):
     async def __ainit__(self):
-        self.con = await aiosqlite.connect(path_db)
+        self.con = await aiosqlite.connect(PATH_DATABASE)
         self.con.row_factory = dict_factory
 
     # Получение пользователя из БД
@@ -57,9 +57,9 @@ class DB(AsyncClass):
     # Регистрация пользователя в БД
     async def register_user(self, user_id, user_name, first_name):
         await self.con.execute("INSERT INTO users("
-                                "user_id, user_name, first_name, reg_date_unix, balance)"
+                                "user_id, user_name, first_name, unix, balance)"
                                 "VALUES (?,?,?,?,?)",
-                                [user_id, user_name, first_name, get_unix(), 0])
+                                [user_id, user_name, first_name, get_unix(full=False), 0])
         await self.con.commit()
         
     # Редактирование пользователя
@@ -71,6 +71,7 @@ class DB(AsyncClass):
         await self.con.commit()
 
     #Проверка на существование бд и ее создание
+#Проверка на существование бд и ее создание
     async def create_db(self):
         users_info = await self.con.execute("PRAGMA table_info(users)")
         if len(await users_info.fetchall()) == 6:
@@ -81,7 +82,7 @@ class DB(AsyncClass):
                                    "user_id INTEGER,"
                                    "user_name TEXT,"
                                    "first_name TEXT,"
-                                   "reg_date_unix INTEGER,"
+                                   "unix INTEGER,"
                                    "balance INTEGER)")
             print("database was not found (Users | 1/10), creating...")
             await self.con.commit()
