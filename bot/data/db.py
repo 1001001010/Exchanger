@@ -77,6 +77,13 @@ class DB(AsyncClass):
         row = await self.con.execute(queryy, params)
         return await row.fetchone()
     
+    # Обновление настроек
+    async def update_settings(self, **kwargs):
+        queryy = "UPDATE settings SET"
+        queryy, parameters = query(queryy, kwargs)
+        await self.con.execute(queryy, parameters)
+        await self.con.commit()
+    
 #Проверка на существование бд и ее создание
     async def create_db(self):
         users_info = await self.con.execute("PRAGMA table_info(users)")
@@ -100,9 +107,9 @@ class DB(AsyncClass):
                                    "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                    "is_work TEXT,"
                                    "support TEXT,"
-                                   "description TEXT)")
+                                   "info TEXT)")
             print("database was not found (Settings | 2/10), creating...")
             await self.con.execute("INSERT INTO settings("
-                                            "is_work, support, description) "
+                                            "is_work, support, info) "
                                             "VALUES (?, ?, ?)", ['True', '', ''])
             await self.con.commit()
