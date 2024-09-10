@@ -15,10 +15,7 @@ router = Router(name=__name__)
 @router.message(F.text == "⚙ Настройки")
 async def admin_settings_menu_message(message: Message, bot: Bot, state: FSM, arSession: ARS):
     await state.clear()
-    await message.answer(
-        "⚙ Меню настроек ", 
-        reply_markup=admin_settings_inl()
-    )
+    await message.answer("⚙ Меню настроек ", reply_markup=await admin_settings_inl())
 
 
 @router.callback_query(F.data == "settings")
@@ -26,7 +23,7 @@ async def admin_settings_menu_call(call: CallbackQuery, bot: Bot, state: FSM, ar
     await state.clear()
     await call.message.edit_text(
         "⚙ Меню настроек ", 
-        reply_markup=admin_settings_inl()
+        reply_markup=await admin_settings_inl()
     )
     
 #Открытие редактирования
@@ -80,3 +77,17 @@ async def admin_save_settings(message: Message, bot: Bot, state: FSM, arSession:
         await db.update_settings(info=parse_msg)
         await message.answer("Информация успешно обновлена")
     await state.finish()
+
+# Включение / отключение тех. работ
+@router.callback_query(F.data.startswith("edit_work:"))
+async def admin_edit_settings(call: CallbackQuery, bot: Bot, state: FSM, arSession: ARS):
+    await state.clear()
+    data = call.data.split(":")[1]
+    if data == 'turnOn':
+        await db.update_settings(is_work="False")
+        await call.answer("Режим тех. работ: Включен")
+    else: 
+        await db.update_settings(is_work="True")
+        await call.answer("Режим тех. работ: Выключен")
+    await call.message.delete()
+    await call.message.answer("⚙ Меню настроек ", reply_markup=await admin_settings_inl())
