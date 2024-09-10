@@ -31,7 +31,7 @@ async def admin_settings_menu_call(call: CallbackQuery, bot: Bot, state: FSM, ar
     
 #Открытие редактирования
 @router.callback_query(F.data.startswith("open:"))
-async def functions_mail_confirm(call: CallbackQuery, bot: Bot, state: FSM, arSession: ARS):
+async def admin_open_settings(call: CallbackQuery, bot: Bot, state: FSM, arSession: ARS):
     await state.clear()
     data = call.data.split(":")[1]
     settings = await db.get_settings(id=1)
@@ -52,7 +52,7 @@ async def functions_mail_confirm(call: CallbackQuery, bot: Bot, state: FSM, arSe
 
 # Редактирование настроек 
 @router.callback_query(F.data.startswith("edit:"))
-async def functions_mail_confirm(call: CallbackQuery, bot: Bot, state: FSM, arSession: ARS):
+async def admin_edit_settings(call: CallbackQuery, bot: Bot, state: FSM, arSession: ARS):
     await state.clear()
     await call.message.delete()
     data = call.data.split(":")[1]
@@ -65,7 +65,7 @@ async def functions_mail_confirm(call: CallbackQuery, bot: Bot, state: FSM, arSe
     await state.set_state("settings_edit")
 
 @router.message(F.text, StateFilter("settings_edit"))
-async def functions_profile_balance_add_get(message: Message, bot: Bot, state: FSM, arSession: ARS):
+async def admin_save_settings(message: Message, bot: Bot, state: FSM, arSession: ARS):
     param = (await state.get_data())['settings_edit_param']
     await state.clear()
     if param == "support":
@@ -79,3 +79,4 @@ async def functions_profile_balance_add_get(message: Message, bot: Bot, state: F
         print(parse_msg)
         await db.update_settings(info=parse_msg)
         await message.answer("Информация успешно обновлена")
+    await state.finish()

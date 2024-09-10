@@ -46,11 +46,27 @@ async def smart_message(
         text: str,
         keyboard: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup] = None,
         photo: Union[str, None] = None,
+        video: Union[str, None] = None,
+        gif: Union[str, None] = None,
 ):
-    if photo is not None and photo.title() != "None":
+    if photo is not None:
         await bot.send_photo(
             chat_id=user_id,
             photo=photo,
+            caption=text,
+            reply_markup=keyboard,
+        )
+    elif video is not None:
+        await bot.send_video(
+            chat_id=user_id,
+            video=video,
+            caption=text,
+            reply_markup=keyboard,
+        )
+    elif gif is not None:
+        await bot.send_animation(
+            chat_id=user_id,
+            animation=gif,
             caption=text,
             reply_markup=keyboard,
         )

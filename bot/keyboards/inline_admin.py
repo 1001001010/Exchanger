@@ -27,3 +27,10 @@ def admin_settings_edit_inl(data) -> InlineKeyboardMarkup:
     )
     return keyboard.as_markup()
 
+def admin_func_inl() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+    keyboard.row(
+        ikb("📭 Рассылка", data=f'newsletter')  
+    )
+    return keyboard.as_markup()
+

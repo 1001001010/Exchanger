@@ -11,7 +11,7 @@ def support_url_inl(support_login: str) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.row(
-        ikb("💌 Написать в поддержку", url=f"https://t.me/{support_login}"),
+        ikb("💌 Написать в поддержку", url=support_login),
     )
 
     return keyboard.as_markup()
